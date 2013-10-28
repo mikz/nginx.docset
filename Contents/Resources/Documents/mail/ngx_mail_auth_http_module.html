@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Module ngx_mail_auth_http_module</title>
+<style type="text/css">body { font-family: Georgia, serif; } p { text-align: justify; } table.news p { margin-top: 0; } table.news td { vertical-align: baseline; } table.news .date { text-align: right; padding-right: 0.5em; white-space: nowrap; } table.donors td { vertical-align: baseline; } table.donors li { text-align: left; } div.directive { background: #EEEEEE; padding: 10pt 10pt 10pt 0; } div.directive td { vertical-align: baseline; } div.directive pre { padding: 0; margin: 0; } div.directive p { margin: 5pt 0 0 0; font-size: 80%; } div#banner { background: #EEEEEE; padding: 10pt 10pt 10pt 0; } a.notrans { color: gray; text-decoration:none; } span.initial { font-size: 200%; float: left; padding-right: 10pt;} li { text-align: justify; padding-top: 0.5em; } .compact li { padding-top: 0; } dt { padding-top: 0.5em; } .compact dt { padding-top: 0; } dd { text-align: justify; } td.list { background: #EEEEEE; } blockquote.note { text-align: justify; background: #EEEEEE; border: none; margin: 1em; padding: 0.5em; } blockquote.example { background: transparent; border: none; margin: 1em; padding: 0.5em; } blockquote.example pre { padding: 0; margin: 0; } sup { font-size: 50%; }</style>
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-27974099-2']);
+        _gaq.push(['_setDomainName', 'nginx.org']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+           var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+</head>
+<body><table width="100%">
+<tr><td width="70%"><center><h3>Module ngx_mail_auth_http_module</h3></center></td></tr>
+<tr><td valign="top">
+<table width="100%"><tr><td align="left">
+<a href="#directives">Directives</a><br>     <a href="#auth_http">auth_http</a><br>     <a href="#auth_http_header">auth_http_header</a><br>     <a href="#auth_http_timeout">auth_http_timeout</a><br><a href="#protocol">Protocol</a><br>
+</td></tr></table>
+<a name="directives"></a><center><h4>Directives</h4></center>
+<a name="auth_http"></a><div class="directive"><table cellspacing="0">
+<tr>
+<td>
+            syntax:
+                </td>
+                <td>
+            <code><strong>auth_http</strong> <code><i>URL</i></code>;</code><br>
+</td>
+                </tr>
+<tr>
+<td>
+            default:
+                </td>
+                <td>
+            
+            —
+                </td>
+                </tr>
+<tr>
+<td>
+            context:
+                </td>
+                <td>
+            <code>mail</code>, <code>server</code><br>
+</td>
+                </tr>
+</table></div>
+<p>
+Sets the URL of the HTTP authentication server.
+The protocol is described below.
+</p>
+<a name="auth_http_header"></a><div class="directive"><table cellspacing="0">
+<tr>
+<td>
+            syntax:
+                </td>
+                <td>
+            <code><strong>auth_http_header</strong> <code><i>header</i></code> <code><i>value</i></code>;</code><br>
+</td>
+                </tr>
+<tr>
+<td>
+            default:
+                </td>
+                <td>
+            
+            —
+                </td>
+                </tr>
+<tr>
+<td>
+            context:
+                </td>
+                <td>
+            <code>mail</code>, <code>server</code><br>
+</td>
+                </tr>
+</table></div>
+<p>
+Appends the specified header to requests to the authentication server.
+This header can be used as the shared secret to verify
+that the request comes from nginx.
+For example:
+</p> <blockquote class="example"><pre>
+auth_http_header X-Auth-Key "secret_string";
+</pre></blockquote>
+<p> 
+</p>
+<a name="auth_http_timeout"></a><div class="directive"><table cellspacing="0">
+<tr>
+<td>
+            syntax:
+                </td>
+                <td>
+            <code><strong>auth_http_timeout</strong> <code><i>time</i></code>;</code><br>
+</td>
+                </tr>
+<tr>
+<td>
+            default:
+                </td>
+                <td>
+            <pre>auth_http_timeout 60s;</pre>
+                </td>
+                </tr>
+<tr>
+<td>
+            context:
+                </td>
+                <td>
+            <code>mail</code>, <code>server</code><br>
+</td>
+                </tr>
+</table></div>
+<p>
+</p>
+
+
+<a name="protocol"></a><center><h4>Protocol</h4></center>
+<p>
+The HTTP is used to communicate with the authentication server.
+The data in the response body is ignored, and the information is passed only in
+the headers.
+</p>
+<p>
+Examples of requests and responses:
+</p>
+<p>
+Request:
+</p> <blockquote class="example"><pre>
+GET /auth HTTP/1.0
+Host: localhost
+Auth-Method: plain # plain or apop or cram-md5
+Auth-User: user
+Auth-Pass: password
+Auth-Protocol: imap # imap, pop3 or smtp
+Auth-Login-Attempt: 1 # attempt count in a single session
+Client-IP: 192.168.1.1
+</pre></blockquote>
+<p> 
+Good response:
+</p> <blockquote class="example"><pre>
+HTTP/1.0 200 OK # this line is ignored
+Auth-Status: OK
+Auth-Server: 10.1.1.1
+Auth-Port: 143
+</pre></blockquote>
+<p> 
+Bad response:
+</p> <blockquote class="example"><pre>
+HTTP/1.0 200 OK # this line is ignored
+Auth-Status: Invalid login or password
+Auth-Wait: 3 # wait for 3 seconds before returning an error to the client
+</pre></blockquote>
+<p> 
+</p>
+<p>
+If there is no “Auth-Wait” header in a request,
+an error will be returned and the connection will be closed.
+The current implementation allocates memory for each authentication attempt.
+The memory is freed only at the end of a session.
+Therefore, the number of invalid authentication attempts in a single session
+must be limited — the server must response without
+the “Auth-Wait” header after 10-20 attempts
+(the attempt number is passed in the “Auth-Login-Attempt”
+header).
+</p>
+<p>
+When the APOP or CRAM-MD5 are used, a request-response will look as follows.
+</p> <blockquote class="example"><pre>
+GET /auth HTTP/1.0
+Host: localhost
+Auth-Method: apop
+Auth-User: user
+Auth-Salt: &lt;238188073.1163692009@mail.example.com&gt;
+Auth-Pass: auth_response
+Auth-Protocol: imap
+Auth-Login-Attempt: 1 # attempt count in a single session
+Client-IP: 192.168.1.1
+</pre></blockquote>
+<p> 
+Good response:
+</p> <blockquote class="example"><pre>
+HTTP/1.0 200 OK # this line is ignored
+Auth-Status: OK
+Auth-Server: 10.1.1.1
+Auth-Port: 143
+Auth-Pass: plain-text-pass
+</pre></blockquote>
+<p> 
+</p>
+<p>
+For the SMTP, the response additionally takes into account
+the “Auth-Error-Code” header — if exists, it is used
+as a response code.
+Otherwise, the 535 5.7.0 code will be added to
+the “Auth-Status”.
+</p>
+<p>
+For example, if the following response is received
+from the authentication server:
+</p> <blockquote class="example"><pre>
+HTTP/1.0 200 OK
+Auth-Status: Temporary server problem, try again later
+Auth-Error-Code: 451 4.3.0
+Auth-Wait: 3
+</pre></blockquote>
+<p> 
+then the SMTP client will receive an error
+</p> <blockquote class="example"><pre>
+451 4.3.0 Temporary server problem, try again later
+</pre></blockquote>
+<p> 
+</p>
+
+</td></tr>
+</table></body>
+</html>
